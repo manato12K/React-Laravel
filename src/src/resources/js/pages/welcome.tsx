@@ -34,6 +34,12 @@ export default function Welcome() {
                                 >
                                     Register
                                 </Link>
+                                <Link href={route('shop.index')}>
+                                Home
+                                </Link>
+                                <Link href={route('sample')}>
+                                Sample
+                                </Link>
                             </>
                         )}
                     </nav>
