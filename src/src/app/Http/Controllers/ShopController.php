@@ -20,4 +20,12 @@ class ShopController extends Controller
             'newReviews' => $newReviews,
         ]);
     }
+
+    public function detail($id)
+    {
+        $shop = Shop::with('reviews')->find($id);
+        return Inertia::render('Shop/Detail', [
+            'shop' => $shop,
+        ]);
+    }
 }
