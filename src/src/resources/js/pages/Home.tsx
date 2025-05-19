@@ -2,6 +2,7 @@ import React, { FC } from 'react';
 import MainLayout from '@/layouts/MainLayout';
 import { Link } from '@inertiajs/react';
 import StarRating from '@/components/Atoms/StarRating';
+import UserName from '@/components/Atoms/UserName';
 
 interface Shop {
   id: number;
@@ -65,7 +66,7 @@ const Home: FC<HomeProps> = ({ shops, newReviews }) => {
                   key={review.id}
                   className="bg-white rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow duration-200"
                 >
-                  <h3 className="text-xl font-semibold text-gray-800 mb-2">{review.user.name}</h3>
+                  <UserName name={review.user.name} />
                   <div className="flex items-center mb-2">
                     <div className="text-yellow-400">
                       <StarRating rating={review.rating} />
