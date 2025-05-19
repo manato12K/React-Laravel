@@ -11,9 +11,12 @@ class ShopController extends Controller
 {
     public function index()
     {
-        $shops = Shop::with('reviews')->get();
+        $shops = Shop::with(['reviews.user'])->get();
 
-        $newReviews = Review::with('shop', 'user')->orderBy('created_at', 'desc')->take(5)->get();
+        $newReviews = Review::with(['shop', 'user'])
+            ->orderBy('created_at', 'desc')
+            ->take(5)
+            ->get();
 
         return Inertia::render('Home', [
             'shops' => $shops,
@@ -23,7 +26,8 @@ class ShopController extends Controller
 
     public function detail($id)
     {
-        $shop = Shop::with('reviews')->find($id);
+        $shop = Shop::with(['reviews.user'])->findOrFail($id);
+        
         return Inertia::render('Shop/Detail', [
             'shop' => $shop,
         ]);
