@@ -1,5 +1,6 @@
 import MainLayout from '@/layouts/MainLayout';
 import React from 'react';
+import StarRating from '@/components/Atoms/StarRating';
 
 interface Review {
   id: number;
@@ -25,17 +26,12 @@ interface Shop {
 interface Props {
   shop: Shop;
 }
+// ... existing code ...
 
 const Detail: React.FC<Props> = ({ shop }) => {
   const averageRating = shop.reviews.length > 0
     ? shop.reviews.reduce((acc, review) => acc + review.rating, 0) / shop.reviews.length
     : 0;
-
-  const renderStars = (rating: number) => {
-    return [...Array(5)].map((_, i) => (
-      <span key={i}>{i < rating ? '★' : '☆'}</span>
-    ));
-  };
 
   return (
     <MainLayout>
@@ -94,9 +90,7 @@ const Detail: React.FC<Props> = ({ shop }) => {
                   <h2 className="text-lg font-semibold text-gray-800">レビュー</h2>
                   <div className="flex items-center gap-2">
                     <span className="text-gray-700 font-medium">総合評価：</span>
-                    <span className="text-yellow-400 text-lg">
-                      {renderStars(Math.round(averageRating))}
-                    </span>
+                    <StarRating rating={Math.round(averageRating)} />
                     <span className="font-medium">{averageRating.toFixed(1)}</span>
                     <span className="ml-1 text-sm text-gray-500">/5.0</span>
                   </div>
@@ -119,7 +113,7 @@ const Detail: React.FC<Props> = ({ shop }) => {
                             <span className="font-medium text-gray-800">{review.user.name}</span>
                           </div>
                           <div className="flex items-center text-yellow-400">
-                            {renderStars(review.rating)}
+                            <StarRating rating={review.rating} />
                             <span className="ml-1 text-gray-700 font-medium">{review.rating}.0</span>
                             <span className="text-gray-500 ml-1 text-sm">/5.0</span>
                           </div>

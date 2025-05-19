@@ -1,6 +1,7 @@
 import React, { FC } from 'react';
 import MainLayout from '@/layouts/MainLayout';
 import { Link } from '@inertiajs/react';
+import StarRating from '@/components/Atoms/StarRating';
 
 interface Shop {
   id: number;
@@ -24,14 +25,6 @@ interface HomeProps {
 }
 
 const Home: FC<HomeProps> = ({ shops, newReviews }) => {
-  const renderStars = (rating: number) => {
-    return [...Array(5)].map((_, index) => (
-      <span key={index} className="text-xl">
-        {index < rating ? '★' : '☆'}
-      </span>
-    ));
-  };
-
   return (
     <MainLayout>
       <div className='bg-amber-50 p-6 rounded-lg shadow-md mb-6'>
@@ -75,7 +68,7 @@ const Home: FC<HomeProps> = ({ shops, newReviews }) => {
                   <h3 className="text-xl font-semibold text-gray-800 mb-2">{review.user.name}</h3>
                   <div className="flex items-center mb-2">
                     <div className="text-yellow-400">
-                      {renderStars(review.rating)}
+                      <StarRating rating={review.rating} />
                     </div>
                   </div>
                   <p className="text-gray-600">{review.comment}</p>
