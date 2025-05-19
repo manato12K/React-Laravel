@@ -1,7 +1,7 @@
 import MainLayout from '@/layouts/MainLayout';
 import React from 'react';
 import StarRating from '@/components/Atoms/StarRating';
-import UserName from '@/components/Atoms/UserName';
+import ReviewItem from '@/components/Molecules/ReviewItem';
 
 interface Review {
   id: number;
@@ -98,23 +98,11 @@ const Detail: React.FC<Props> = ({ shop }) => {
                               </div>
 
                               <div className="space-y-4">
-                                  {shop.reviews.length === 0 ? (
-                                      <p className="py-4 text-center text-gray-500">レビューはまだありません。</p>
-                                  ) : (
-                                      shop.reviews.map((review) => (
-                                          <div key={review.id} className="rounded bg-white p-4 shadow-sm">
-                                              <div className="mb-2 flex items-center justify-between">
-                                                  <UserName name={review.user.name} />
-                                                  <div className="flex items-center text-yellow-400">
-                                                      <StarRating rating={review.rating} />
-                                                      <span className="ml-1 font-medium text-gray-700">{review.rating}.0</span>
-                                                      <span className="ml-1 text-sm text-gray-500">/5.0</span>
-                                                  </div>
-                                              </div>
-                                              <p className="mt-3 leading-relaxed text-gray-700">{review.comment}</p>
-                                          </div>
-                                      ))
-                                  )}
+                                <ul className="space-y-4">
+                                    {shop.reviews.map((review) => (
+                                        <ReviewItem key={review.id} review={review} />
+                                    ))}
+                                </ul>
                               </div>
                           </div>
                       </div>
