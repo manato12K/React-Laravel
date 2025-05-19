@@ -86,25 +86,36 @@ const Detail: React.FC<Props> = ({ shop }) => {
                           </div>
 
                           {/* レビュー */}
-                          <div className="mt-8 rounded-lg bg-gray-50 p-6">
-                              <div className="mb-4 flex items-center justify-between">
-                                  <h2 className="text-lg font-semibold text-gray-800">レビュー</h2>
-                                  <div className="flex items-center gap-2">
-                                      <span className="font-medium text-gray-700">総合評価：</span>
-                                      <StarRating rating={Math.round(averageRating)} />
-                                      <span className="font-medium">{averageRating.toFixed(1)}</span>
-                                      <span className="ml-1 text-sm text-gray-500">/5.0</span>
+                          {shop.reviews.length === 0 ? (
+                              <div className="mt-8 rounded-lg bg-gray-50 p-6">
+                                <p className="text-gray-700">レビューがありません。</p>
+                              </div>
+                          ) : (
+                              <div className="mt-8 rounded-lg bg-gray-50 p-6">
+                                  <div className="mb-4 flex items-center justify-between">
+                                      <div className="flex items-center gap-2">
+                                          <h2 className="text-lg font-semibold text-gray-800">レビュー</h2>
+                                          <span className="rounded-full bg-gray-200 px-2 py-1 text-sm text-gray-600">
+                                              {shop.reviews.length}件
+                                          </span>
+                                      </div>
+                                      <div className="flex items-center gap-2">
+                                          <span className="font-medium text-gray-700">総合評価：</span>
+                                          <StarRating rating={Math.round(averageRating)} />
+                                          <span className="font-medium">{averageRating.toFixed(1)}</span>
+                                          <span className="ml-1 text-sm text-gray-500">/5.0</span>
+                                      </div>
+                                  </div>
+
+                                  <div className="space-y-4">
+                                    <ul className="space-y-4">
+                                        {shop.reviews.map((review) => (
+                                            <ReviewItem key={review.id} review={review} />
+                                        ))}
+                                    </ul>
                                   </div>
                               </div>
-
-                              <div className="space-y-4">
-                                <ul className="space-y-4">
-                                    {shop.reviews.map((review) => (
-                                        <ReviewItem key={review.id} review={review} />
-                                    ))}
-                                </ul>
-                              </div>
-                          </div>
+                          )}
                       </div>
                   </div>
               </div>

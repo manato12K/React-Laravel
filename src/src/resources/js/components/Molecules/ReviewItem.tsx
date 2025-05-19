@@ -15,7 +15,6 @@ interface Review {
 }
 
 
-
 const ReviewItem = ({ review }: { review: Review }) => {
     return (
         <li key={review.id} className="rounded-lg bg-white p-4 shadow-sm transition-shadow duration-200 hover:shadow-md">
