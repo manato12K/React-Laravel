@@ -34,7 +34,7 @@ export default function Welcome() {
                                 >
                                     Register
                                 </Link>
-                                <Link href={route('shop.index')}>
+                                <Link href={route('home')}>
                                 Home
                                 </Link>
                                 <Link href={route('sample')}>

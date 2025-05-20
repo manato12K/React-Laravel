@@ -33,7 +33,8 @@ class ReviewController extends Controller
                 ->with('success', 'レビューを投稿しました。');
         } catch (\Exception $e) {
             return redirect()
-                ->route('review.create')->with('error', 'レビュー投稿に失敗しました。');
+                ->route('review.create', ['id' => $request->shop_id])
+                ->with('error', 'レビュー投稿に失敗しました。');
         }
     }
 }
