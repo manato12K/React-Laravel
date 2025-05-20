@@ -25,10 +25,15 @@ class ReviewController extends Controller
             'shop_id' => 'required|integer',
            'user_id' =>'required|integer',
         ]);
-        // dd($request);
-
-        $review = new Review();
-        $review->saveReview($request);
-        return redirect()->route('shop.detail', ['id' => $request->shop_id]);
+        try {
+            $review = new Review();
+            $review->saveReview($request);
+            return redirect()
+                ->route('shop.detail', ['id' => $request->shop_id])
+                ->with('success', 'レビューを投稿しました。');
+        } catch (\Exception $e) {
+            return redirect()
+                ->route('review.create')->with('error', 'レビュー投稿に失敗しました。');
+        }
     }
 }

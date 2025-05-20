@@ -28,6 +28,9 @@ const Create: React.FC<Props> = ({ shop }) => {
         comment: '',
     });
 
+    const [isloading, setIsloading] = useState(false);
+    const [showModal, setShowModal] = useState(false);
+
     const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const {name, value} = e.target;
         setValues({ ...values, [name]: value });
@@ -39,6 +42,12 @@ const Create: React.FC<Props> = ({ shop }) => {
 
     const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        setShowModal(true);
+    };
+
+    const handleConfirm = () => {
+        setIsloading(true);
+        setShowModal(false);
         router.post(route('review.store'), values);
     };
 
@@ -52,9 +61,7 @@ const Create: React.FC<Props> = ({ shop }) => {
 
                     <form className="space-y-6" onSubmit={handleSubmit}>
                         <div>
-                            <label className="mb-2 block text-sm font-medium text-gray-700">
-                                評価
-                            </label>
+                            <label className="mb-2 block text-sm font-medium text-gray-700">評価</label>
                             <div className="flex gap-2">
                                 {stars.map((star) => (
                                     <button
@@ -62,9 +69,7 @@ const Create: React.FC<Props> = ({ shop }) => {
                                         type="button"
                                         onClick={() => handleRatingChange(star)}
                                         className={`h-10 w-10 rounded-full ${
-                                            values.rating >= star 
-                                                ? 'bg-yellow-400 text-white' 
-                                                : 'bg-gray-200'
+                                            values.rating >= star ? 'bg-yellow-400 text-white' : 'bg-gray-200'
                                         } transition-colors duration-200`}
                                     >
                                         ★
@@ -88,13 +93,45 @@ const Create: React.FC<Props> = ({ shop }) => {
 
                         <button
                             type="submit"
-                            className="w-full rounded-md bg-blue-600 px-4 py-2 font-medium text-white transition duration-200 hover:bg-blue-700"
+                            disabled={!values.comment || values.rating === 0}
+                            className={`w-full rounded-md px-4 py-2 font-medium text-white transition duration-200 ${
+                                !values.comment || values.rating === 0 
+                                    ? 'bg-gray-400 cursor-not-allowed'
+                                    : 'bg-blue-600 hover:bg-blue-700'
+                            }`}
                         >
-                            投稿する
+                            {!values.comment || values.rating === 0 ? (
+                                'コメントと評価を入力してください'
+                            ) : (
+                                isloading ? '投稿中...' : '投稿する'
+                            )}
                         </button>
                     </form>
                 </div>
             </div>
+
+            {/* Confirmation Modal */}
+            {showModal && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+                    <div className="rounded-lg bg-white p-6 shadow-xl">
+                        <h3 className="mb-4 text-lg font-medium">レビューを投稿しますか？</h3>
+                        <div className="flex justify-end gap-4">
+                            <button
+                                onClick={() => setShowModal(false)}
+                                className="rounded-md bg-gray-200 px-4 py-2 text-gray-800 hover:bg-gray-300"
+                            >
+                                キャンセル
+                            </button>
+                            <button
+                                onClick={handleConfirm}
+                                className="rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+                            >
+                                投稿する
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </MainLayout>
     );
 }
