@@ -2,6 +2,7 @@ import MainLayout from '@/layouts/MainLayout';
 import React from 'react';
 import StarRating from '@/components/Atoms/StarRating';
 import ReviewItem from '@/components/Molecules/ReviewItem';
+import {Link } from '@inertiajs/react';
 
 interface Review {
   id: number;
@@ -27,7 +28,6 @@ interface Shop {
 interface Props {
   shop: Shop;
 }
-// ... existing code ...
 
 const Detail: React.FC<Props> = ({ shop }) => {
   const averageRating = shop.reviews.length > 0
@@ -86,18 +86,38 @@ const Detail: React.FC<Props> = ({ shop }) => {
                           </div>
 
                           {/* レビュー */}
+                          <div className="mt-8 flex justify-left">
+                              <Link
+                                  href={route('review.create', { id: shop.id })}
+                                  className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-6 py-3 text-center text-sm font-medium text-white transition-all duration-200 hover:bg-blue-700 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                              >
+                                  <svg 
+                                      className="h-5 w-5" 
+                                      fill="none" 
+                                      stroke="currentColor" 
+                                      viewBox="0 0 24 24"
+                                  >
+                                      <path 
+                                          strokeLinecap="round" 
+                                          strokeLinejoin="round" 
+                                          strokeWidth="2" 
+                                          d="M12 4v16m8-8H4"
+                                      />
+                                  </svg>
+                                  レビューを作成
+                              </Link>
+                          </div>
                           {shop.reviews.length === 0 ? (
                               <div className="mt-8 rounded-lg bg-gray-50 p-6">
-                                <p className="text-gray-700">レビューがありません。</p>
+                                  <p className="text-gray-700">レビューがありません。</p>
                               </div>
                           ) : (
                               <div className="mt-8 rounded-lg bg-gray-50 p-6">
                                   <div className="mb-4 flex items-center justify-between">
                                       <div className="flex items-center gap-2">
+                                        
                                           <h2 className="text-lg font-semibold text-gray-800">レビュー</h2>
-                                          <span className="rounded-full bg-gray-200 px-2 py-1 text-sm text-gray-600">
-                                              {shop.reviews.length}件
-                                          </span>
+                                          <span className="rounded-full bg-gray-200 px-2 py-1 text-sm text-gray-600">{shop.reviews.length}件</span>
                                       </div>
                                       <div className="flex items-center gap-2">
                                           <span className="font-medium text-gray-700">総合評価：</span>
@@ -108,11 +128,11 @@ const Detail: React.FC<Props> = ({ shop }) => {
                                   </div>
 
                                   <div className="space-y-4">
-                                    <ul className="space-y-4">
-                                        {shop.reviews.map((review) => (
-                                            <ReviewItem key={review.id} review={review} />
-                                        ))}
-                                    </ul>
+                                      <ul className="space-y-4">
+                                          {shop.reviews.map((review) => (
+                                              <ReviewItem key={review.id} review={review} />
+                                          ))}
+                                      </ul>
                                   </div>
                               </div>
                           )}
