@@ -1,6 +1,6 @@
 import MainLayout from "@/layouts/MainLayout";
 import React, { FormEvent, useState, ChangeEvent } from 'react';
-import {router} from '@inertiajs/react';
+import {router, usePage } from '@inertiajs/react';
 
 interface Shop {
     id: number;
@@ -21,8 +21,11 @@ interface ReviewValues {
 const stars = [1, 2, 3, 4, 5];
 
 const Create: React.FC<Props> = ({ shop }) => {
+
+    const { auth } = usePage().props
+
     const [values, setValues] = useState<ReviewValues>({
-        user_id: 1,
+        user_id: auth.user.id,
         shop_id: shop.id,
         rating: 1,
         comment: '',

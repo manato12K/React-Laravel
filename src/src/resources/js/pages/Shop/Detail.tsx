@@ -2,7 +2,7 @@ import MainLayout from '@/layouts/MainLayout';
 import React from 'react';
 import StarRating from '@/components/Atoms/StarRating';
 import ReviewItem from '@/components/Molecules/ReviewItem';
-import {Link } from '@inertiajs/react';
+import {Link, usePage } from '@inertiajs/react';
 
 interface Review {
   id: number;
@@ -30,6 +30,9 @@ interface Props {
 }
 
 const Detail: React.FC<Props> = ({ shop }) => {
+
+    const { auth } = usePage().props
+
   const averageRating = shop.reviews.length > 0
     ? shop.reviews.reduce((acc, review) => acc + review.rating, 0) / shop.reviews.length
     : 0;
@@ -87,25 +90,29 @@ const Detail: React.FC<Props> = ({ shop }) => {
 
                           {/* レビュー */}
                           <div className="mt-8 flex justify-left">
+                            {auth.user && auth.user.id !== 0 ? (
                               <Link
-                                  href={route('review.create', { id: shop.id })}
-                                  className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-6 py-3 text-center text-sm font-medium text-white transition-all duration-200 hover:bg-blue-700 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                                href={route('review.create', { id: shop.id })}
+                                className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-6 py-3 text-center text-sm font-medium text-white transition-all duration-200 hover:bg-blue-700 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                               >
-                                  <svg 
-                                      className="h-5 w-5" 
-                                      fill="none" 
-                                      stroke="currentColor" 
-                                      viewBox="0 0 24 24"
-                                  >
-                                      <path 
-                                          strokeLinecap="round" 
-                                          strokeLinejoin="round" 
-                                          strokeWidth="2" 
-                                          d="M12 4v16m8-8H4"
-                                      />
-                                  </svg>
-                                  レビューを作成
+                                <svg 
+                                  className="h-5 w-5" 
+                                  fill="none" 
+                                  stroke="currentColor" 
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path 
+                                    strokeLinecap="round" 
+                                    strokeLinejoin="round" 
+                                    strokeWidth="2" 
+                                    d="M12 4v16m8-8H4"
+                                  />
+                                </svg>
+                                レビューを作成
                               </Link>
+                            ) : (
+                              <div>作成するにはログインしてください</div>
+                            )}
                           </div>
                           {shop.reviews.length === 0 ? (
                               <div className="mt-8 rounded-lg bg-gray-50 p-6">
