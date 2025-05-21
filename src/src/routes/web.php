@@ -21,6 +21,14 @@ Route::get('/sample', function () {
     return Inertia::render('Sample');
 })->name('sample');
 
+
+
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/shop/create', [ShopController::class, 'create'])->name('shop.create');
+    Route::post('/shop/store', [ShopController::class, 'store'])->name('shop.store');
+});
+
 Route::get('/shop/{id}', [ShopController::class, 'detail'])->name('shop.detail');
 
 

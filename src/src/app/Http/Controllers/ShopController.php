@@ -32,4 +32,31 @@ class ShopController extends Controller
             'shop' => $shop,
         ]);
     }
+
+    public function create(){
+        return Inertia::render('Shop/Create');
+    }
+
+    public function store (Request $request) {
+
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'location' => 'required|string|max:255',
+            'description' => 'required|string',
+        ]);
+
+        $shopModel = new Shop();
+
+        $shop = $shopModel->saveShop([
+            'name' => $request->name,
+            'location' => $request->location,
+            'description' => $request->description,
+        ]);
+
+        if($shop) {
+            $status = 'shop-created';
+        }
+
+        return redirect()->route('home',['status' => $status]);
+    }
 }
