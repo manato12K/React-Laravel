@@ -35,5 +35,7 @@ Route::get('/shop/{id}', [ShopController::class, 'detail'])->name('shop.detail')
 
 Route::get('/review/create/shop/{id}', [ReviewController::class, 'create'])->name('review.create');
 Route::post('/review/store', [ReviewController::class, 'store'])->name('review.store');
+Route::get('/review/{id}', [ReviewController::class, 'edit'])->name('review.edit');
+Route::put('/review/{id}', [ReviewController::class, 'update'])->name('review.update');
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';

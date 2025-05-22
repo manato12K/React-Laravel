@@ -37,4 +37,35 @@ class ReviewController extends Controller
                 ->with('error', 'レビュー投稿に失敗しました。');
         }
     }
+
+    public function edit ($id) 
+    {
+        $review = Review::find($id);
+        return Inertia::render('Review/Edit',
+        [
+            'review' => $review,
+        ]);
+    }
+
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'rating' =>'required|integer|min:1|max:5',
+            'comment' =>'required|string|max:255',
+        ]);
+    
+        $review = Review::findOrFail($id);
+        $review->updateReview($request);
+        return redirect()
+            ->route('shop.detail', ['id' => $review->shop_id])
+            ->with('success', 'レビューを更新しました。');
+    }
+    public function destroy(Request $request)
+    {
+        $reviewModel = new Review();
+        $reviewModel->deleteReview($request);
+        return redirect()
+            ->route('shop.detail', ['id' => $request->shop_id])
+            ->with('success', 'レビューを削除しました。');
+    }
 }

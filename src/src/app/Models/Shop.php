@@ -29,13 +29,20 @@ class Shop extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function shopImages()
+    {
+        return $this->hasMany(ShopImage::class);
+    }
+
     public function saveShop($data)
     {
-        $this->name = $data->name;
-        $this->location = $data->location;
-        $this->description = $data->description;
-        $this->create_by = $data->created_by;
-        $this->updated_by = $data->updated_by;
+        $this->fill([
+            'name' => $data['name'],
+            'location' => $data['location'],
+            'description' => $data['description'],
+            'created_by' => $data['created_by'],
+            'updated_by' => $data['updated_by']
+        ]);
 
         $this->save();
 

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Shop;
 use App\Models\Review;
+use App\Models\ShopImage;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
@@ -30,14 +31,22 @@ class ShopController extends Controller
 
     public function detail($id)
     {
-        $shop = Shop::with(['reviews.user'])->findOrFail($id);
-        
+        $shop = Shop::with(['reviews.user', 'shopImages'])->findOrFail($id);
+
         return Inertia::render('Shop/Detail', [
-            'shop' => $shop,
+            'shop' => [
+                'id' => $shop->id,
+                'name' => $shop->name,
+                'description' => $shop->description,
+                'location' => $shop->location,
+                'reviews' => $shop->reviews,
+                'shop_images' => $shop->shopImages, // ★ React側が期待するsnake_caseに明示
+            ],
         ]);
     }
 
-    public function create(){
+    public function create()
+    {
         return Inertia::render('Shop/Create');
     }
 
@@ -68,15 +77,12 @@ class ShopController extends Controller
             if ($request->hasFile('images')) {
                 $images = $request->file('images');
                 foreach ($images as $image) {
-                    // Get image extension
                     $extension = $image->getClientOriginalExtension();
-                    // Generate random string
                     $random = Str::random(16);
-                    // Generate filename
                     $fileName = $shop->id . '_' . $random . '.' . $extension;
-                    
-                    // Save image metadata
-                    $shop->images()->create([
+
+                    $shopImageModel = new ShopImage();
+                    $shopImageModel->saveImage([
                         'shop_id' => $shop->id,
                         'file_name' => $fileName,
                         'file_path' => 'storage/shop_image/' . $fileName,
@@ -85,10 +91,9 @@ class ShopController extends Controller
                         'file_extension' => $extension,
                         'file_mime' => $image->getClientMimeType(),
                         'file_original_name' => $image->getClientOriginalName(),
-                        'file_original_extension' => $image->getClientOriginalExtension(),
+                        'file_original_path' => 'N/A',
                     ]);
-                    
-                    // Store physical file
+
                     $image->storeAs('public/shop_image', $fileName);
                 }
             }

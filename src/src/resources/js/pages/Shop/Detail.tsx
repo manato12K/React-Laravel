@@ -2,7 +2,7 @@ import MainLayout from '@/layouts/MainLayout';
 import React from 'react';
 import StarRating from '@/components/Atoms/StarRating';
 import ReviewItem from '@/components/Molecules/ReviewItem';
-import {Link, usePage } from '@inertiajs/react';
+import { Link, usePage } from '@inertiajs/react';
 
 interface Review {
   id: number;
@@ -23,20 +23,22 @@ interface Shop {
   description: string;
   location: string;
   reviews: Review[];
+  shopImages?: Array<{
+    file_path: string;
+  }>;
 }
 
 interface Props {
   shop: Shop;
 }
-
+console.log(import.meta.env.VITE_APP_URL)
 const Detail: React.FC<Props> = ({ shop }) => {
-
-    const { auth } = usePage().props
+  const { auth } = usePage().props;
 
   const averageRating = shop.reviews.length > 0
     ? shop.reviews.reduce((acc, review) => acc + review.rating, 0) / shop.reviews.length
     : 0;
-
+    console.log(shop.shop_images?.[0]?.file_path);
   return (
       <MainLayout>
           <div className="mx-auto max-w-4xl p-8">
@@ -51,11 +53,22 @@ const Detail: React.FC<Props> = ({ shop }) => {
                                   <span className="text-gray-900">{shop.name}</span>
                               </p>
                               <div className="relative aspect-[16/9] overflow-hidden rounded-lg bg-gray-200">
-                                  <img
-                                      src="https://placehold.co/1600x900?text=Shop+Image"
-                                      alt={`${shop.name}の写真`}
-                                      className="absolute inset-0 h-full w-full object-cover"
-                                  />
+                                  {shop.shop_images && shop.shop_images.length > 0 ? (
+                                      (console.log('Image src:', import.meta.env.VITE_APP_URL + '/' + shop.shop_images?.[0]?.file_path),
+                                      (
+                                          <img
+                                              src={import.meta.env.VITE_APP_URL + '/' + shop.shop_images?.[0]?.file_path}
+                                              alt={`${shop.name}の写真 1`}
+                                              className="absolute inset-0 h-full w-full object-cover"
+                                          />
+                                      ))
+                                  ) : (
+                                      <img
+                                          src="/storage/images/noimage.png"
+                                          alt={`${shop.name}の写真`}
+                                          className="absolute inset-0 h-full w-full object-cover"
+                                      />
+                                  )}
                               </div>
                           </div>
 
@@ -89,30 +102,20 @@ const Detail: React.FC<Props> = ({ shop }) => {
                           </div>
 
                           {/* レビュー */}
-                          <div className="mt-8 flex justify-left">
-                            {auth.user && auth.user.id !== 0 ? (
-                              <Link
-                                href={route('review.create', { id: shop.id })}
-                                className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-6 py-3 text-center text-sm font-medium text-white transition-all duration-200 hover:bg-blue-700 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                              >
-                                <svg 
-                                  className="h-5 w-5" 
-                                  fill="none" 
-                                  stroke="currentColor" 
-                                  viewBox="0 0 24 24"
-                                >
-                                  <path 
-                                    strokeLinecap="round" 
-                                    strokeLinejoin="round" 
-                                    strokeWidth="2" 
-                                    d="M12 4v16m8-8H4"
-                                  />
-                                </svg>
-                                レビューを作成
-                              </Link>
-                            ) : (
-                              <div>作成するにはログインしてください</div>
-                            )}
+                          <div className="justify-left mt-8 flex">
+                              {auth.user && auth.user.id !== 0 ? (
+                                  <Link
+                                      href={route('review.create', { id: shop.id })}
+                                      className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-6 py-3 text-center text-sm font-medium text-white transition-all duration-200 hover:bg-blue-700 hover:shadow-lg focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none"
+                                  >
+                                      <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
+                                      </svg>
+                                      レビューを作成
+                                  </Link>
+                              ) : (
+                                  <div>作成するにはログインしてください</div>
+                              )}
                           </div>
                           {shop.reviews.length === 0 ? (
                               <div className="mt-8 rounded-lg bg-gray-50 p-6">
@@ -122,7 +125,6 @@ const Detail: React.FC<Props> = ({ shop }) => {
                               <div className="mt-8 rounded-lg bg-gray-50 p-6">
                                   <div className="mb-4 flex items-center justify-between">
                                       <div className="flex items-center gap-2">
-                                        
                                           <h2 className="text-lg font-semibold text-gray-800">レビュー</h2>
                                           <span className="rounded-full bg-gray-200 px-2 py-1 text-sm text-gray-600">{shop.reviews.length}件</span>
                                       </div>
@@ -137,7 +139,13 @@ const Detail: React.FC<Props> = ({ shop }) => {
                                   <div className="space-y-4">
                                       <ul className="space-y-4">
                                           {shop.reviews.map((review) => (
-                                              <ReviewItem key={review.id} review={review} />
+                                              <Link
+                                                  href={route('review.edit', { id: review.id })}
+                                                  className="group"
+                                                  key={review.id}
+                                              >
+                                                  <ReviewItem key={review.id} review={review} />
+                                              </Link>
                                           ))}
                                       </ul>
                                   </div>

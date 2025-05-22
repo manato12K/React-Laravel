@@ -37,4 +37,12 @@ class Review extends Model
         $this->save();
         return $this;
     }
+
+    public function updateReview($request)
+{
+    $this->rating = $request->rating;
+    $this->comment = $request->comment;
+    $this->save();
+    return $this;
+}
 }
