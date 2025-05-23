@@ -3,96 +3,141 @@ import { Link } from '@inertiajs/react';
 import ReviewItem from '@/components/Molecules/ReviewItem';
 import React, { FC, useEffect, useState } from 'react';
 import { router } from '@inertiajs/react';
+import ReactPaginate from 'react-paginate';
 
 interface Shop {
-  id: number;
-  name: string;
-  search; string;
+    id: number;
+    name: string;
+    search: string;
 }
 
 interface User {
-  id: number;
-  name: string;
+    id: number;
+    name: string;
 }
 
-interface Reviews {
-  id: number;
-  comment: string;
-  rating: number;
-  user: User; // この行を追加
+interface Review {
+    id: number;
+    comment: string;
+    rating: number;
+    user: User;
 }
 
 interface HomeProps {
-  shops: Shop[];
-  newReviews: Reviews[];
-  search: string;
+    shops: Shop[];
+    newReviews: Review[];
+    search: string;
 }
 
 const Home: FC<HomeProps> = ({ shops, newReviews, search }) => {
-
     const [searchTerm, setSearchTerm] = useState(search);
 
     useEffect(() => {
         const delayDebounceFn = setTimeout(() => {
             router.get('/', { search: searchTerm }, { preserveState: true });
-          }, 300); // 300ms デバウンス
-      
-          return () => clearTimeout(delayDebounceFn);
-        }, [searchTerm]);
+        }, 300);
 
-  return (
-      <MainLayout>
-          <div className="mb-6 rounded-lg bg-amber-50 p-6 shadow-md">
-              <div className="mx-auto max-w-6xl p-6">
-                  <h1 className="mb-8 text-center text-4xl font-bold text-gray-800">ショップ一覧ページ</h1>
+        return () => clearTimeout(delayDebounceFn);
+    }, [searchTerm]);
 
-          {/* 🔍 検索フォーム追加 */}
-          <div className="mb-6 text-center">
-            <input
-              type="text"
-              placeholder="ショップ名で検索"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full max-w-md rounded border px-4 py-2 shadow-sm"
-            />
-          </div>
+    const itemsPerPage = 4;
+    const [itemsOffset, setItemsOffset] = useState(0);
+    const endOffset = itemsOffset + itemsPerPage;
+    const currentShops = shops.slice(itemsOffset, endOffset);
+    const pageCount = Math.ceil(shops.length / itemsPerPage);
 
-                  <div className="mb-12">
-                      <ul className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-                          {shops.map((shop) => (
-                              <li key={shop.id} className="rounded-lg bg-white p-6 shadow-md transition-shadow duration-200 hover:shadow-lg">
-                                  <Link href={route('shop.detail', { id: shop.id })}>
-                                      <div className="flex items-center gap-4">
-                                          <div className="relative h-24 w-24">
-                                              <div className="absolute inset-0 flex items-center justify-center rounded-lg bg-gray-200">
-                                                  <span className="text-sm text-gray-400">写真</span>
-                                              </div>
-                                              <img
-                                                  src="https://placehold.co/100x100?text=No+Image"
-                                                  alt={`${shop.name}の写真`}
-                                                  className="absolute inset-0 h-full w-full rounded-lg object-cover"
-                                              />
-                                          </div>
-                                          <h3 className="text-xl font-semibold text-gray-700">{shop.name}</h3>
-                                      </div>
-                                  </Link>
-                              </li>
-                          ))}
-                      </ul>
-                  </div>
+    const handlePageClick = (e: { selected: number }) => {
+        const newOffset = (e.selected * itemsPerPage) % shops.length;
+        setItemsOffset(newOffset);
+    };
 
-                  <div className="rounded-xl bg-gray-50 p-8">
-                      <h2 className="mb-6 text-2xl font-bold text-gray-800">新着レビュー</h2>
-                      <ul className="space-y-4">
-                          {newReviews.map((review) => (
-                              <ReviewItem key={review.id} review={review} />
-                          ))}
-                      </ul>
-                  </div>
-              </div>
-          </div>
-      </MainLayout>
-  );
+    return (
+        <MainLayout>
+            <div className="min-h-screen bg-gradient-to-b from-amber-50 to-white py-12">
+                <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                    <h1 className="mb-12 text-center text-5xl font-bold text-gray-900 drop-shadow-sm">caffee shop</h1>
+
+                    <div className="mb-8 flex justify-center">
+                        <div className="relative w-full max-w-xl">
+                            <input
+                                type="text"
+                                placeholder="ショップを検索..."
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                className="w-full rounded-full border-2 border-amber-200 bg-white px-6 py-3 text-lg shadow-sm transition-all duration-200 placeholder:text-gray-400 focus:border-amber-400 focus:ring-4 focus:ring-amber-100 focus:outline-none"
+                            />
+                            <span className="absolute top-1/2 right-4 -translate-y-1/2 text-xl text-gray-400">🔍</span>
+                        </div>
+                    </div>
+
+                    <div className="mb-16">
+                        <ul className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
+                            {currentShops.map((shop) => (
+                                <li key={shop.id} className="group">
+                                    <Link href={route('shop.detail', { id: shop.id })}>
+                                        <div className="overflow-hidden rounded-2xl bg-white shadow-md transition-all duration-300 hover:shadow-xl">
+                                            <div className="relative h-48 w-full bg-gray-200">
+                                                <img
+                                                    src="https://placehold.co/400x300?text=Shop+Image"
+                                                    alt={`${shop.name}の写真`}
+                                                    className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                                                />
+                                            </div>
+                                            <div className="p-6">
+                                                <h3 className="text-xl font-bold text-gray-800">{shop.name}</h3>
+                                                <div className="mt-2 flex items-center text-amber-500">
+                                                    <span className="mr-1">
+                                                        総合評価：
+                                                        {shop.reviews?.length > 0
+                                                            ? (
+                                                                  shop.reviews.reduce((sum, review) => sum + review.rating, 0) / shop.reviews.length
+                                                              ).toFixed(1)
+                                                            : 0}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </Link>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+
+                    {pageCount > 1 && (
+                        <ReactPaginate
+                            className="mb-16 flex justify-center"
+                            pageCount={pageCount}
+                            onPageChange={handlePageClick}
+                            containerClassName="pagination flex gap-3"
+                            pageClassName="page-item"
+                            pageLinkClassName="inline-flex h-10 w-10 items-center justify-center rounded-full border-2 border-amber-200 bg-white text-sm font-medium text-gray-700 transition-all duration-200 hover:border-amber-400 hover:bg-amber-50"
+                            activeClassName="active"
+                            activeLinkClassName="!bg-amber-400 !border-amber-400 !text-white hover:!bg-amber-500"
+                            previousLabel="←"
+                            nextLabel="→"
+                            previousClassName="page-item"
+                            nextClassName="page-item"
+                            previousLinkClassName="inline-flex h-10 w-10 items-center justify-center rounded-full border-2 border-amber-200 bg-white text-sm font-medium text-gray-700 transition-all duration-200 hover:border-amber-400 hover:bg-amber-50"
+                            nextLinkClassName="inline-flex h-10 w-10 items-center justify-center rounded-full border-2 border-amber-200 bg-white text-sm font-medium text-gray-700 transition-all duration-200 hover:border-amber-400 hover:bg-amber-50"
+                            disabledClassName="opacity-50 cursor-not-allowed"
+                            breakLabel="..."
+                            breakClassName="page-item"
+                            breakLinkClassName="inline-flex h-10 w-10 items-center justify-center rounded-full border-2 border-amber-200 bg-white text-sm font-medium text-gray-700"
+                        />
+                    )}
+
+                    <div className="rounded-3xl bg-white p-8 shadow-lg">
+                        <h2 className="mb-8 text-3xl font-bold text-gray-900">最新のレビュー</h2>
+                        <ul className="space-y-6">
+                            {newReviews.map((review) => (
+                                <ReviewItem key={review.id} review={review} />
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </MainLayout>
+    );
 };
 
 export default Home;
