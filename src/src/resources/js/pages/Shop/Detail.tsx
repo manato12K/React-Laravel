@@ -1,9 +1,11 @@
 import MainLayout from '@/layouts/MainLayout';
-import React, { useState } from 'react';
 import StarRating from '@/components/Atoms/StarRating';
 import ReviewItem from '@/components/Molecules/ReviewItem';
 import { Link, usePage } from '@inertiajs/react';
 import ReactPaginate from 'react-paginate';
+import mapboxgl from 'mapbox-gl';
+import 'mapbox-gl/dist/mapbox-gl.css';
+import React, { useEffect, useRef, useState } from 'react';
 
 interface Review {
     id: number;
@@ -50,6 +52,38 @@ const Detail: React.FC<Props> = ({ shop }) => {
         const newOffset = (e.selected * itemsPerPage) % shop.reviews.length;
         setItemsOffset(newOffset);
     };
+    const mapContainer = useRef<HTMLDivElement | null>(null);
+    const map = useRef<mapboxgl.Map | null>(null);
+    const [lngLat, setLngLat] = useState<[number, number] | null>(null);
+
+    useEffect(() => {
+        // 住所から座標を取得
+        const fetchGeocode = async () => {
+            const accessToken = 'pk.eyJ1IjoibWFuYXRvbWF0byIsImEiOiJjbWIwYmFocDEwczg0MmtvcGZ1ajNpOGtuIn0.IQbawF5n9mlNoovNfWBSdw';
+            const response = await fetch(
+                `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(shop.location)}.json?access_token=${accessToken}&language=ja&limit=1`
+            );
+            const data = await response.json();
+            if (data.features && data.features.length > 0) {
+                setLngLat(data.features[0].center);
+            }
+        };
+        fetchGeocode();
+    }, [shop.location]);
+
+    useEffect(() => {
+        if (!lngLat || map.current || !mapContainer.current) return;
+        mapboxgl.accessToken = 'pk.eyJ1IjoibWFuYXRvbWF0byIsImEiOiJjbWIwYmFocDEwczg0MmtvcGZ1ajNpOGtuIn0.IQbawF5n9mlNoovNfWBSdw';
+        map.current = new mapboxgl.Map({
+            container: mapContainer.current,
+            style: 'mapbox://styles/mapbox/streets-v11',
+            center: lngLat,
+            zoom: 14
+        });
+        return () => {
+            map.current?.remove();
+        };
+    }, [lngLat]);
 
     return (
         <MainLayout>
@@ -91,23 +125,13 @@ const Detail: React.FC<Props> = ({ shop }) => {
                             <div className="mt-8 rounded-lg bg-gray-50 p-6">
                                 <h2 className="mb-4 text-lg font-semibold text-gray-800">所在地</h2>
                                 <p className="flex items-center leading-relaxed text-gray-700">
-                                    <svg
-                                        className="mr-2 h-5 w-5 text-gray-600"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        viewBox="0 0 24 24"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                    >
-                                        <path
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            strokeWidth={2}
-                                            d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                                        />
+                                    <svg className="mr-2 h-5 w-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                                     </svg>
                                     {shop.location}
                                 </p>
+                                <div ref={mapContainer} style={{ height: '400px', width: '100%', marginTop: '16px', borderRadius: '8px' }} />
                             </div>
 
                             {/* レビュー */}

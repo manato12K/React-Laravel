@@ -8,6 +8,11 @@ use App\Http\Controllers\ReviewController;
 // Basic routes
 Route::get('/', [ShopController::class, 'index'])->name('home');
 
+// mapbox
+// Route::get('/map', function () {
+//     return Inertia::render('mapBox/Map'); // 'Map' から 'mapBox/Map' に変更
+// })->name('map');
+
 // Shop routes - 詳細表示は認証不要
 
 // Authenticated routes
