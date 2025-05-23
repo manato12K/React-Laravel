@@ -27,8 +27,7 @@ const Header: React.FC = () => {
                                         href={route('logout')}
                                         method="post"
                                         as="button"
-                                        className="inline-block rounded-sm border border-[#19140035] px-5 py-1.5 text-sm leading-normal text-[#1b1b18] hover:border-[#1915014a] dark:border-[#3E3E3A] dark:text-[#EDEDEC] dark:hover:border-[#62605b]"
-                                    >
+                                        className="inline-block rounded-sm border border-transparent px-5 py-1.5 text-sm leading-normal text-[#1b1b18] hover:border-[#19140035] dark:text-[#EDEDEC] dark:hover:border-[#3E3E3A]">
                                         Logout
                                     </Link>
                                     <Link
@@ -37,6 +36,8 @@ const Header: React.FC = () => {
                                     >
                                         ShopCreate
                                     </Link>
+                                    <Link href={route('home')} className='="inline-block rounded-sm border border-transparent px-5 py-1.5 text-sm leading-normal text-[#1b1b18] hover:border-[#19140035] dark:text-[#EDEDEC] dark:hover:border-[#3E3E3A]"
+                                    '>一覧に戻る</Link>
                                 </>
                             ) : (
                                 <>
