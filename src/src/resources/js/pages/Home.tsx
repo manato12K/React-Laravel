@@ -1,11 +1,13 @@
-import React, { FC } from 'react';
 import MainLayout from '@/layouts/MainLayout';
 import { Link } from '@inertiajs/react';
 import ReviewItem from '@/components/Molecules/ReviewItem';
+import React, { FC, useEffect, useState } from 'react';
+import { router } from '@inertiajs/react';
 
 interface Shop {
   id: number;
   name: string;
+  search; string;
 }
 
 interface User {
@@ -23,14 +25,37 @@ interface Reviews {
 interface HomeProps {
   shops: Shop[];
   newReviews: Reviews[];
+  search: string;
 }
 
-const Home: FC<HomeProps> = ({ shops, newReviews }) => {
+const Home: FC<HomeProps> = ({ shops, newReviews, search }) => {
+
+    const [searchTerm, setSearchTerm] = useState(search);
+
+    useEffect(() => {
+        const delayDebounceFn = setTimeout(() => {
+            router.get('/', { search: searchTerm }, { preserveState: true });
+          }, 300); // 300ms デバウンス
+      
+          return () => clearTimeout(delayDebounceFn);
+        }, [searchTerm]);
+
   return (
       <MainLayout>
           <div className="mb-6 rounded-lg bg-amber-50 p-6 shadow-md">
               <div className="mx-auto max-w-6xl p-6">
                   <h1 className="mb-8 text-center text-4xl font-bold text-gray-800">ショップ一覧ページ</h1>
+
+          {/* 🔍 検索フォーム追加 */}
+          <div className="mb-6 text-center">
+            <input
+              type="text"
+              placeholder="ショップ名で検索"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full max-w-md rounded border px-4 py-2 shadow-sm"
+            />
+          </div>
 
                   <div className="mb-12">
                       <ul className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">

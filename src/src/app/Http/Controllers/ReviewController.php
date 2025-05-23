@@ -60,12 +60,4 @@ class ReviewController extends Controller
             ->route('shop.detail', ['id' => $review->shop_id])
             ->with('success', 'レビューを更新しました。');
     }
-    public function destroy(Request $request)
-    {
-        $reviewModel = new Review();
-        $reviewModel->deleteReview($request);
-        return redirect()
-            ->route('shop.detail', ['id' => $request->shop_id])
-            ->with('success', 'レビューを削除しました。');
-    }
 }

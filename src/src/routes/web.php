@@ -8,13 +8,15 @@ use App\Http\Controllers\ReviewController;
 // Basic routes
 Route::get('/', [ShopController::class, 'index'])->name('home');
 
-// Shop routes
-Route::get('/shop/{id}', [ShopController::class, 'detail'])->name('shop.detail');
+// Shop routes - 詳細表示は認証不要
 
 // Authenticated routes
 Route::middleware(['auth'])->group(function () {
     Route::get('/shop/create', [ShopController::class, 'create'])->name('shop.create');
+    Route::get('/shop/{id}', [ShopController::class, 'detail'])->name('shop.detail');
     Route::post('/shop/store', [ShopController::class, 'store'])->name('shop.store');
+    // 削除用のルートはPOSTまたはDELETEメソッドに変更し、URLパスも変更
+    Route::delete('/shop/{id}/delete', [ShopController::class, 'delete'])->name('shop.delete');
 });
 
 // Authenticated and verified routes
